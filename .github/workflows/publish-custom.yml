@@ -232,9 +232,6 @@ jobs:
           registry-url: https://registry.npmjs.org
           node-version-file: .nvmrc
 
-      - name: Install npm packages
-        run: yarn install
-
       - name: Download all binaries
         uses: actions/download-artifact@v4
         with:

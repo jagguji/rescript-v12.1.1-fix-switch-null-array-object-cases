@@ -38,6 +38,8 @@ if (rootPkg.optionalDependencies) {
     if (key.startsWith("@rescript/")) {
       const platform = key.replace("@rescript/", "");
       newDeps[`@roshan84ya/rescript-${platform}`] = version;
+    } else if (key.startsWith("@roshan84ya/")) {
+      newDeps[key] = version;
     } else {
       newDeps[key] = val;
     }
