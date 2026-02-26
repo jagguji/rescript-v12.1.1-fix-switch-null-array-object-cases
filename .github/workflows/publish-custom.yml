@@ -195,28 +195,26 @@ jobs:
         if: runner.os == 'macOS'
         run: node scripts/buildNinjaBinary.js
 
-      - name: Build ninja (Windows)
+      - name: Setup MSVC and Build Ninja (Windows)
         if: runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: x64
-
-      - name: Build ninja binary (Windows)
-        if: runner.os == 'Windows'
-        shell: bash
+        shell: cmd
         run: |
-          # 1. Create symlink for python3
-          ln -s "$pythonLocation/python.exe" "$pythonLocation/python3.exe"
+          :: 1. Activate Visual Studio Developer Command Prompt
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=x64
 
-          # 2. Add python to PATH explicitly
-          export PATH="$pythonLocation:$PATH"
+          :: 2. Create python3 alias
+          for /f "tokens=*" %%i in ('where python') do set PYTHON_EXE=%%i
+          copy "%PYTHON_EXE%" "%PYTHON_EXE:\python.exe=\python3.exe%" /y
 
-          # 3. Debug: Check environment
-          echo "Checking environment..."
-          which python3
-          cl.exe /? > /dev/null && echo "MSVC Compiler (cl.exe) found!" || echo "MSVC NOT FOUND"
+          :: 3. Verify cl.exe is available
+          cl.exe /? >nul 2>&1
+          if %errorlevel% neq 0 (
+            echo "ERROR: MSVC Compiler (cl.exe) not found!"
+            exit /b 1
+          )
+          echo "SUCCESS: cl.exe is available"
 
-          # 4. Build ninja
+          :: 4. Run the build
           node scripts/buildNinjaBinary.js
 
       - name: Build ninja (Linux static)
