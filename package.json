@@ -1,5 +1,5 @@
 {
-  "name": "@roshan84ya/rescript",
+  "name": "rescript",
   "version": "12.2.0",
   "description": "ReScript toolchain",
   "type": "module",
@@ -78,14 +78,14 @@
     "#dev/*": "./lib_dev/*.js"
   },
   "dependencies": {
-    "@rescript/runtime": "12.1.0"
+    "@rescript/runtime": "12.2.0"
   },
   "optionalDependencies": {
-    "@roshan84ya/rescript-darwin-arm64": "workspace:packages/@rescript/darwin-arm64",
-    "@rescript/darwin-x64": "12.1.0",
-    "@rescript/linux-arm64": "12.1.0",
-    "@rescript/linux-x64": "12.1.0",
-    "@rescript/win32-x64": "12.1.0"
+    "@rescript/darwin-x64": "12.2.0",
+    "@rescript/linux-arm64": "12.2.0",
+    "@rescript/linux-x64": "12.2.0",
+    "@rescript/win32-x64": "12.2.0",
+    "@roshan84ya/rescript-darwin-arm64": "workspace:packages/@rescript/darwin-arm64"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
