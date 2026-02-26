@@ -34,11 +34,12 @@ jobs:
             ocaml_compiler: 5.3.0
             node-target: darwin-arm64
             rust-target: aarch64-apple-darwin
-          - os: windows-latest
+          - os: windows-2025
             ocaml_compiler: 5.3.0
             node-target: win32-x64
             rust-target: x86_64-pc-windows-msvc
             exe-suffix: ".exe"
+            continue-on-error: true
 
     runs-on: ${{ matrix.os }}
 
@@ -179,9 +180,14 @@ jobs:
         if: runner.os == 'Windows'
         shell: cmd
         run: |
+          :: Setup MSVC environment in THIS shell
           call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=x64
+
+          :: Create python3 alias
           for /f "tokens=*" %%i in ('where python.exe') do set "PYPATH=%%~dpi"
           if not exist "%PYPATH%python3.exe" copy "%PYPATH%python.exe" "%PYPATH%python3.exe"
+
+          :: Build
           node scripts/buildNinjaBinary.js
 
       - name: Build ninja (Linux static)
@@ -272,9 +278,4 @@ jobs:
           cd ../linux-x64 && npm publish --access public --tag custom
           cd ../win32-x64 && npm publish --access public --tag custom
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish main package
-        run: npm publish --access public --tag custom
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKE
