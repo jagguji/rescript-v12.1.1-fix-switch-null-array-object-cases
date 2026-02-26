@@ -34,11 +34,12 @@ jobs:
             ocaml_compiler: 5.3.0
             node-target: darwin-arm64
             rust-target: aarch64-apple-darwin
-          - os: windows-2025
-            ocaml_compiler: 5.3.0
-            node-target: win32-x64
-            rust-target: x86_64-pc-windows-gnu
-            exe-suffix: ".exe"
+          # Windows build disabled - MSVC environment issues
+          # - os: windows-2025
+          #   ocaml_compiler: 5.3.0
+          #   node-target: win32-x64
+          #   rust-target: x86_64-pc-windows-gnu
+          #   exe-suffix: ".exe"
 
     runs-on: ${{ matrix.os }}
 
@@ -46,27 +47,6 @@ jobs:
       SETUP_OCAML_VERSION: 3.4.6
 
     steps:
-      - name: "Windows: Set git config"
-        if: runner.os == 'Windows'
-        run: |
-          git config --system core.autocrlf false
-          git config --system core.eol lf
-          git config --system core.longpaths true
-
-      - name: "Windows: Enable long paths"
-        if: runner.os == 'Windows'
-        run: |
-          # Enable long paths in Windows registry
-          powershell -Command "Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled' -Value 1"
-          git config --global core.longpaths true
-          fsutil behavior query SymlinkEvaluation
-          fsutil behavior set symlinkEvaluation R2L:1 R2R:1
-          echo "HOME=$USERPROFILE" >> "$GITHUB_ENV"
-          echo "MSYS=winsymlinks:native" >> "$GITHUB_ENV"
-          echo "CYGWIN=winsymlinks:native" >> "$GITHUB_ENV"
-          echo "BASH_ENV=C:\\cygwin\\bash_env" >> "$GITHUB_ENV"
-        shell: bash
-
       - name: Checkout
         uses: actions/checkout@v6
 
@@ -187,8 +167,8 @@ jobs:
       - name: Copy compiler exes to platform bin dir
         run: node scripts/copyExes.js --compiler
 
-      - name: Setup Python for ninja build
-        if: runner.os != 'Linux'
+      - name: Setup Python for ninja build (macOS)
+        if: runner.os == 'macOS'
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
@@ -196,28 +176,6 @@ jobs:
       - name: Build ninja (macOS)
         if: runner.os == 'macOS'
         run: node scripts/buildNinjaBinary.js
-
-      - name: Setup MSVC and Build Ninja (Windows)
-        if: runner.os == 'Windows'
-        shell: cmd
-        run: |
-          :: 1. Activate Visual Studio Developer Command Prompt
-          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=x64
-
-          :: 2. Create python3 alias
-          for /f "tokens=*" %%i in ('where python') do set PYTHON_EXE=%%i
-          copy "%PYTHON_EXE%" "%PYTHON_EXE:\python.exe=\python3.exe%" /y
-
-          :: 3. Verify cl.exe is available
-          cl.exe /? >nul 2>&1
-          if %errorlevel% neq 0 (
-            echo "ERROR: MSVC Compiler (cl.exe) not found!"
-            exit /b 1
-          )
-          echo "SUCCESS: cl.exe is available"
-
-          :: 4. Run the build
-          node scripts/buildNinjaBinary.js
 
       - name: Build ninja (Linux static)
         if: runner.os == 'Linux'
