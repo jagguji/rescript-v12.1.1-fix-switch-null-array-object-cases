@@ -56,6 +56,8 @@ jobs:
       - name: "Windows: Enable long paths"
         if: runner.os == 'Windows'
         run: |
+          # Enable long paths in Windows registry
+          powershell -Command "New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled' -Value 1 -PropertyType DWORD -Force"
           fsutil behavior query SymlinkEvaluation
           fsutil behavior set symlinkEvaluation R2L:1 R2R:1
           fsutil behavior query SymlinkEvaluation
