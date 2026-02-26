@@ -281,5 +281,11 @@ jobs:
           npm publish packages/@rescript/linux-arm64 --access public --tag custom
           npm publish packages/@rescript/linux-x64 --access public --tag custom
           npm publish packages/@rescript/win32-x64 --access public --tag custom
+          npm publish packages/@rescript/runtime --access public --tag custom
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish main package
+        run: npm publish --access public --tag custom
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
