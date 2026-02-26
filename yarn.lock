@@ -422,25 +422,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rescript/darwin-arm64@workspace:packages/@rescript/darwin-arm64":
-  version: 0.0.0-use.local
-  resolution: "@rescript/darwin-arm64@workspace:packages/@rescript/darwin-arm64"
-  languageName: unknown
-  linkType: soft
-
-"@rescript/darwin-x64@workspace:packages/@rescript/darwin-x64":
+"@rescript/darwin-x64@npm:12.1.0, @rescript/darwin-x64@workspace:packages/@rescript/darwin-x64":
   version: 0.0.0-use.local
   resolution: "@rescript/darwin-x64@workspace:packages/@rescript/darwin-x64"
   languageName: unknown
   linkType: soft
 
-"@rescript/linux-arm64@workspace:packages/@rescript/linux-arm64":
+"@rescript/linux-arm64@npm:12.1.0, @rescript/linux-arm64@workspace:packages/@rescript/linux-arm64":
   version: 0.0.0-use.local
   resolution: "@rescript/linux-arm64@workspace:packages/@rescript/linux-arm64"
   languageName: unknown
   linkType: soft
 
-"@rescript/linux-x64@workspace:packages/@rescript/linux-x64":
+"@rescript/linux-x64@npm:12.1.0, @rescript/linux-x64@workspace:packages/@rescript/linux-x64":
   version: 0.0.0-use.local
   resolution: "@rescript/linux-x64@workspace:packages/@rescript/linux-x64"
   languageName: unknown
@@ -492,15 +486,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@rescript/runtime@workspace:packages/@rescript/runtime":
+"@rescript/runtime@npm:12.1.0, @rescript/runtime@workspace:packages/@rescript/runtime":
   version: 0.0.0-use.local
   resolution: "@rescript/runtime@workspace:packages/@rescript/runtime"
   dependencies:
-    rescript: "workspace:^"
+    rescript: "workspace:."
   languageName: unknown
   linkType: soft
 
-"@rescript/win32-x64@workspace:packages/@rescript/win32-x64":
+"@rescript/win32-x64@npm:12.1.0, @rescript/win32-x64@workspace:packages/@rescript/win32-x64":
   version: 0.0.0-use.local
   resolution: "@rescript/win32-x64@workspace:packages/@rescript/win32-x64"
   languageName: unknown
@@ -714,6 +708,12 @@ __metadata:
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
+
+"@roshan84ya/rescript-darwin-arm64@workspace:packages/@rescript/darwin-arm64":
+  version: 0.0.0-use.local
+  resolution: "@roshan84ya/rescript-darwin-arm64@workspace:packages/@rescript/darwin-arm64"
+  languageName: unknown
+  linkType: soft
 
 "@tests/analysis@workspace:tests/analysis_tests/tests":
   version: 0.0.0-use.local
@@ -2460,12 +2460,12 @@ __metadata:
   resolution: "rescript@workspace:."
   dependencies:
     "@biomejs/biome": "npm:1.9.4"
-    "@rescript/darwin-arm64": "workspace:packages/@rescript/darwin-arm64"
-    "@rescript/darwin-x64": "workspace:packages/@rescript/darwin-x64"
-    "@rescript/linux-arm64": "workspace:packages/@rescript/linux-arm64"
-    "@rescript/linux-x64": "workspace:packages/@rescript/linux-x64"
-    "@rescript/runtime": "workspace:packages/@rescript/runtime"
-    "@rescript/win32-x64": "workspace:packages/@rescript/win32-x64"
+    "@rescript/darwin-x64": "npm:12.1.0"
+    "@rescript/linux-arm64": "npm:12.1.0"
+    "@rescript/linux-x64": "npm:12.1.0"
+    "@rescript/runtime": "npm:12.1.0"
+    "@rescript/win32-x64": "npm:12.1.0"
+    "@roshan84ya/rescript-darwin-arm64": "workspace:packages/@rescript/darwin-arm64"
     "@types/node": "npm:^25.0.3"
     "@types/semver": "npm:^7.7.0"
     "@yarnpkg/types": "npm:^4.0.1"
@@ -2474,8 +2474,6 @@ __metadata:
     semver: "npm:^7.7.2"
     typescript: "npm:5.9.3"
   dependenciesMeta:
-    "@rescript/darwin-arm64":
-      optional: true
     "@rescript/darwin-x64":
       optional: true
     "@rescript/linux-arm64":
@@ -2483,6 +2481,8 @@ __metadata:
     "@rescript/linux-x64":
       optional: true
     "@rescript/win32-x64":
+      optional: true
+    "@roshan84ya/rescript-darwin-arm64":
       optional: true
   bin:
     bsc: cli/bsc.js
