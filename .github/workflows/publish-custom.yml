@@ -57,10 +57,10 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           # Enable long paths in Windows registry
-          powershell -Command "New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled' -Value 1 -PropertyType DWORD -Force"
+          powershell -Command "Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled' -Value 1"
+          git config --global core.longpaths true
           fsutil behavior query SymlinkEvaluation
           fsutil behavior set symlinkEvaluation R2L:1 R2R:1
-          fsutil behavior query SymlinkEvaluation
           echo "HOME=$USERPROFILE" >> "$GITHUB_ENV"
           echo "MSYS=winsymlinks:native" >> "$GITHUB_ENV"
           echo "CYGWIN=winsymlinks:native" >> "$GITHUB_ENV"
@@ -166,8 +166,13 @@ jobs:
             await fs.writeFile('.opam-path', opamPath, 'utf-8');
 
       - name: Install OPAM dependencies
-        if: steps.cache-opam-env.outputs.cache-hit != 'true'
+        if: steps.cache-opam-env.outputs.cache-hit != 'true' && runner.os != 'Windows'
         run: opam install . --deps-only --with-test
+
+      - name: Install OPAM dependencies (Windows)
+        if: runner.os == 'Windows' && steps.cache-opam-env.outputs.cache-hit != 'true'
+        run: opam install . --deps-only --with-test --disable-sandboxing
+        shell: bash
 
       - name: Build compiler
         if: runner.os != 'Linux'
@@ -194,7 +199,12 @@ jobs:
 
       - name: Build ninja
         if: runner.os != 'Linux'
-        run: node scripts/buildNinjaBinary.js
+        shell: bash
+        run: |
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            cp $(which python) $(dirname $(which python))/python3.exe || true
+          fi
+          node scripts/buildNinjaBinary.js
 
       - name: Build ninja (Linux static)
         if: runner.os == 'Linux'
