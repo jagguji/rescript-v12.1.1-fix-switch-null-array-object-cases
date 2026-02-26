@@ -220,6 +220,7 @@ jobs:
 
   publish:
     needs: build-compiler
+    if: always() && !cancelled()
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
