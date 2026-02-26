@@ -255,6 +255,11 @@ jobs:
           cp -r artifacts/runtime-lib/* packages/@rescript/runtime/ || true
         shell: bash
 
+      - name: Fix executable permissions
+        run: |
+          chmod -R +x packages/@rescript/*/bin/
+        shell: bash
+
       - name: Handle Windows Binary (Build or Fallback)
         run: |
           if [ ! -f "packages/@rescript/win32-x64/bin/rescript.exe" ]; then
