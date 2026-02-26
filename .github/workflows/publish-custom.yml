@@ -191,19 +191,32 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Setup MSVC for ninja build (Windows)
+      - name: Build ninja (macOS)
+        if: runner.os == 'macOS'
+        run: node scripts/buildNinjaBinary.js
+
+      - name: Build ninja (Windows)
         if: runner.os == 'Windows'
-        uses: TheMrMilchmann/setup-msvc-dev@v4
+        uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
 
-      - name: Build ninja
-        if: runner.os != 'Linux'
+      - name: Build ninja binary (Windows)
+        if: runner.os == 'Windows'
         shell: bash
         run: |
-          if [[ "${{ runner.os }}" == "Windows" ]]; then
-            cp $(which python) $(dirname $(which python))/python3.exe || true
-          fi
+          # 1. Create symlink for python3
+          ln -s "$pythonLocation/python.exe" "$pythonLocation/python3.exe"
+
+          # 2. Add python to PATH explicitly
+          export PATH="$pythonLocation:$PATH"
+
+          # 3. Debug: Check environment
+          echo "Checking environment..."
+          which python3
+          cl.exe /? > /dev/null && echo "MSVC Compiler (cl.exe) found!" || echo "MSVC NOT FOUND"
+
+          # 4. Build ninja
           node scripts/buildNinjaBinary.js
 
       - name: Build ninja (Linux static)
