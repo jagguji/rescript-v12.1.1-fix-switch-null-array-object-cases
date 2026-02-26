@@ -34,12 +34,11 @@ jobs:
             ocaml_compiler: 5.3.0
             node-target: darwin-arm64
             rust-target: aarch64-apple-darwin
-          # Windows build disabled - MSVC environment issues
-          # - os: windows-2025
-          #   ocaml_compiler: 5.3.0
-          #   node-target: win32-x64
-          #   rust-target: x86_64-pc-windows-gnu
-          #   exe-suffix: ".exe"
+          - os: windows-latest
+            ocaml_compiler: 5.3.0
+            node-target: win32-x64
+            rust-target: x86_64-pc-windows-msvc
+            exe-suffix: ".exe"
 
     runs-on: ${{ matrix.os }}
 
@@ -237,6 +236,16 @@ jobs:
 
           # Download runtime lib
           cp -r artifacts/runtime-lib/* packages/@rescript/runtime/ || true
+        shell: bash
+
+      - name: Download official Windows binary (fallback)
+        if: hashFiles('artifacts/binaries-win32-x64/') == ''
+        run: |
+          echo "Windows build not found, using official ReScript as fallback"
+          cd packages/@rescript/win32-x64
+          npm pack @rescript/win32-x64@12.1.0
+          tar -xzf rescript-win32-x64-12.1.0.tgz --strip-components=1
+          rm rescript-win32-x64-12.1.0.tgz
         shell: bash
 
       - name: Rename packages to @roshan84ya scope
