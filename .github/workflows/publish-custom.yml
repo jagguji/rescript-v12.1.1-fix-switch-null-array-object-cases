@@ -279,4 +279,4 @@ jobs:
           cd ../linux-x64 && npm publish --access public --tag custom
           cd ../win32-x64 && npm publish --access public --tag custom
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKE
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
