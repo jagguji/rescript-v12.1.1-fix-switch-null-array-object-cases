@@ -182,6 +182,18 @@ jobs:
       - name: Copy compiler exes to platform bin dir
         run: node scripts/copyExes.js --compiler
 
+      - name: Setup Python for ninja build
+        if: runner.os != 'Linux'
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Setup MSVC for ninja build (Windows)
+        if: runner.os == 'Windows'
+        uses: TheMrMilchmann/setup-msvc-dev@v4
+        with:
+          arch: x64
+
       - name: Build ninja
         if: runner.os != 'Linux'
         run: node scripts/buildNinjaBinary.js
