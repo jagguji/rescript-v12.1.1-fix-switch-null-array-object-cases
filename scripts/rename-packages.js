@@ -95,6 +95,15 @@ if (fs.existsSync(runtimePackageJsonPath)) {
   runtimePkg.name = "@roshan84ya/rescript-runtime";
   runtimePkg.version = version;
 
+  // Remove workspace references from dependencies/devDependencies
+  if (runtimePkg.devDependencies) {
+    for (const [key, val] of Object.entries(runtimePkg.devDependencies)) {
+      if (val.startsWith("workspace:")) {
+        delete runtimePkg.devDependencies[key];
+      }
+    }
+  }
+
   if (runtimePkg.publishConfig) {
     delete runtimePkg.publishConfig.provenance;
   }
