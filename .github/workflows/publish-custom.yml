@@ -122,7 +122,15 @@ jobs:
           ./scripts/copyExes.js --rewatch
         shell: bash
 
+      - name: "Windows: Shorten OPAM root"
+        if: runner.os == 'Windows'
+        run: |
+          echo "OPAMROOT=C:\\opam" >> "$GITHUB_ENV"
+          echo "opam_cache_key=opam-env-v8-${{ matrix.os }}-${{ env.SETUP_OCAML_VERSION }}-${{ matrix.ocaml_compiler }}-${{ hashFiles('*.opam') }}" | sed 's/,/-/g' >> $GITHUB_ENV
+        shell: bash
+
       - name: Get OPAM cache key
+        if: runner.os != 'Windows'
         shell: bash
         run: echo "opam_cache_key=opam-env-v8-${{ matrix.os }}-${{ env.SETUP_OCAML_VERSION }}-${{ matrix.ocaml_compiler }}-${{ hashFiles('*.opam') }}" | sed 's/,/-/g' >> $GITHUB_ENV
 
