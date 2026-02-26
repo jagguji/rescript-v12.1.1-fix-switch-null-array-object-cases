@@ -53,6 +53,18 @@ jobs:
           git config --system core.eol lf
           git config --system core.longpaths true
 
+      - name: "Windows: Enable long paths"
+        if: runner.os == 'Windows'
+        run: |
+          fsutil behavior query SymlinkEvaluation
+          fsutil behavior set symlinkEvaluation R2L:1 R2R:1
+          fsutil behavior query SymlinkEvaluation
+          echo "HOME=$USERPROFILE" >> "$GITHUB_ENV"
+          echo "MSYS=winsymlinks:native" >> "$GITHUB_ENV"
+          echo "CYGWIN=winsymlinks:native" >> "$GITHUB_ENV"
+          echo "BASH_ENV=C:\\cygwin\\bash_env" >> "$GITHUB_ENV"
+        shell: bash
+
       - name: Checkout
         uses: actions/checkout@v6
 
@@ -147,6 +159,7 @@ jobs:
       - name: Install OPAM dependencies
         if: steps.cache-opam-env.outputs.cache-hit != 'true'
         run: opam install . --deps-only --with-test
+        shell: bash
 
       - name: Build compiler
         if: runner.os != 'Linux'
