@@ -41,7 +41,6 @@ jobs:
             exe-suffix: ".exe"
 
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.os == 'windows-2025' }}
 
     env:
       SETUP_OCAML_VERSION: 3.4.6
@@ -219,7 +218,6 @@ jobs:
 
   publish:
     needs: build-compiler
-    if: always() && !cancelled()
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
