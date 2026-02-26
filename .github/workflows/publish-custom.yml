@@ -165,8 +165,8 @@ jobs:
       - name: Copy compiler exes to platform bin dir
         run: node scripts/copyExes.js --compiler
 
-      - name: Setup Python for ninja build (macOS)
-        if: runner.os == 'macOS'
+      - name: Setup Python for ninja build (macOS/Windows)
+        if: runner.os != 'Linux'
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
@@ -174,6 +174,15 @@ jobs:
       - name: Build ninja (macOS)
         if: runner.os == 'macOS'
         run: node scripts/buildNinjaBinary.js
+
+      - name: Build ninja (Windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=x64
+          for /f "tokens=*" %%i in ('where python.exe') do set "PYPATH=%%~dpi"
+          if not exist "%PYPATH%python3.exe" copy "%PYPATH%python.exe" "%PYPATH%python3.exe"
+          node scripts/buildNinjaBinary.js
 
       - name: Build ninja (Linux static)
         if: runner.os == 'Linux'
@@ -238,14 +247,18 @@ jobs:
           cp -r artifacts/runtime-lib/* packages/@rescript/runtime/ || true
         shell: bash
 
-      - name: Download official Windows binary (fallback)
-        if: hashFiles('artifacts/binaries-win32-x64/') == ''
+      - name: Handle Windows Binary (Build or Fallback)
         run: |
-          echo "Windows build not found, using official ReScript as fallback"
-          cd packages/@rescript/win32-x64
-          npm pack @rescript/win32-x64@12.1.0
-          tar -xzf rescript-win32-x64-12.1.0.tgz --strip-components=1
-          rm rescript-win32-x64-12.1.0.tgz
+          if [ ! -f "packages/@rescript/win32-x64/bin/rescript.exe" ]; then
+            echo "Windows binary missing. Fetching official 12.1.0 as fallback..."
+            mkdir -p packages/@rescript/win32-x64
+            cd packages/@rescript/win32-x64
+            npm pack @rescript/win32-x64@12.1.0
+            tar -xzf rescript-win32-x64-12.1.0.tgz --strip-components=1
+            rm rescript-win32-x64-12.1.0.tgz
+          else
+            echo "Custom Windows binary found. Proceeding with custom build."
+          fi
         shell: bash
 
       - name: Rename packages to @roshan84ya scope
